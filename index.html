@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Packaging Footprint</title>
+<style>
+  :root {
+    --green-dark: #14352C;
+    --green-mid: #1D4A3C;
+    --orange: #E8871E;
+    --bg: #F4F0E5;
+    --card-bg: #FFFFFF;
+    --text: #1E241C;
+    --muted: #6B7267;
+    --border: #E3DDCB;
+    --good: #2F7A4F;
+    --shadow: 0 1px 3px rgba(20,53,44,0.08), 0 4px 14px rgba(20,53,44,0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F211A;
+      --card-bg: #17332A;
+      --text: #EFEBDE;
+      --muted: #9FAB9A;
+      --border: #274539;
+      --good: #6FCF97;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 14px rgba(0,0,0,0.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F211A;
+    --card-bg: #17332A;
+    --text: #EFEBDE;
+    --muted: #9FAB9A;
+    --border: #274539;
+    --good: #6FCF97;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 14px rgba(0,0,0,0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.45;
+  }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 0 48px;
+  }
+
+  .hero {
+    background: var(--green-dark);
+    color: #F4F0E5;
+    padding: 36px 24px 30px;
+    text-align: left;
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #BFD3C7;
+    font-weight: 600;
+  }
+
+  .hero h1 {
+    margin: 0 0 10px;
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .hero p.sub {
+    margin: 0;
+    font-size: 14.5px;
+    color: #D9E4DC;
+    max-width: 52ch;
+  }
+
+  .section-title {
+    margin: 28px 20px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .section-title:first-of-type { margin-top: 24px; }
+
+  main.card, section.results, section.alt-card, section.tips-card {
+    background: var(--card-bg);
+    margin: 0 20px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  main.card, section.alt-card, section.tips-card { padding: 24px; }
+
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .field-label .big-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--orange);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    accent-color: var(--orange);
+    height: 4px;
+  }
+
+  input[type="number"] {
+    width: 60px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  details.assumptions {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
+  details.assumptions summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    list-style: none;
+  }
+  details.assumptions summary::-webkit-details-marker { display: none; }
+  details.assumptions summary::before { content: "▸ "; }
+  details.assumptions[open] summary::before { content: "▾ "; }
+
+  .assump-grid {
+    display: flex;
+    gap: 20px;
+    margin: 14px 0 10px;
+    flex-wrap: wrap;
+  }
+
+  .assump-grid label {
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .assump-grid input { width: 90px; }
+
+  .assump-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+
+  section.results { padding: 4px 0; overflow: hidden; }
+
+  .stat {
+    padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat:last-child { border-bottom: none; }
+
+  .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  .stat-value {
+    font-size: 30px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat.highlight { background: linear-gradient(0deg, rgba(232,135,30,0.06), rgba(232,135,30,0.06)); }
+  .stat.highlight .stat-value { color: var(--orange); }
+
+  .stat-footnote { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* --- Alternatives / toggles --- */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .toggle-row:last-of-type { border-bottom: none; }
+
+  .toggle-text { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-text .t-title { font-size: 14px; font-weight: 600; }
+  .toggle-text .t-sub { font-size: 12px; color: var(--muted); }
+
+  .switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider-pill {
+    position: absolute; cursor: pointer; inset: 0;
+    background: var(--border);
+    border-radius: 999px;
+    transition: 0.15s;
+  }
+  .slider-pill::before {
+    content: "";
+    position: absolute;
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .switch input:checked + .slider-pill { background: var(--good); }
+  .switch input:checked + .slider-pill::before { transform: translateX(18px); }
+
+  /* --- Savings summary --- */
+  .savings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .savings-box {
+    background: rgba(47,122,79,0.08);
+    border: 1px solid rgba(47,122,79,0.25);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .savings-box .s-label { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .savings-box .s-value { font-size: 20px; font-weight: 700; color: var(--good); font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+  /* --- Tips list --- */
+  .tips-list { list-style: none; margin: 0; padding: 0; }
+  .tips-list li {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .tips-list li:last-child { border-bottom: none; }
+  .tips-list li .mark {
+    color: var(--good);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tips-source {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin: 12px 0 0;
+  }
+
+  footer {
+    margin: 26px 20px 0;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <p class="eyebrow">Sustainable Packaging Management · IIM Bodh Gaya</p>
+    <h1>Your Packaging Footprint</h1>
+    <p class="sub">Enter how often you order in, try a few alternatives, and see how much packaging — and money — it adds up to over a year.</p>
+  </header>
+
+  <p class="section-title">Your order habits</p>
+  <main class="card">
+    <div class="field-label">
+      <span>Orders per week</span>
+      <span class="big-num" id="ordersDisplay">5</span>
+    </div>
+    <div class="input-row">
+      <input type="range" id="ordersRange" min="0" max="15" step="1" value="5">
+      <input type="number" id="ordersNumber" min="0" max="30" step="1" value="5">
+    </div>
+
+    <details class="assumptions">
+      <summary>Assumptions used — edit if you have better numbers</summary>
+      <div class="assump-grid">
+        <label>Packaging pieces / order
+          <input type="number" id="pieces" value="2.8" step="0.1" min="0.5" max="10">
+        </label>
+        <label>Avg. weight / piece (g)
+          <input type="number" id="grams" value="20" step="1" min="1" max="200">
+        </label>
+      </div>
+      <p class="assump-note">2.8 pieces/order is back-calculated from our survey (~14 packaging pieces per student per week at a 4–6 orders/week average). 20g/piece is an illustrative estimate — pouches, trays and boxes vary a lot — so adjust it if you've weighed your own waste.</p>
+    </details>
+  </main>
+
+  <p class="section-title">Current footprint</p>
+  <section class="results">
+    <div class="stat">
+      <span class="stat-label">Packaging pieces / year</span>
+      <span class="stat-value" id="outPieces">–</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Packaging weight / year</span>
+      <span class="stat-value" id="outWeight">–</span>
+    </div>
+    <div class="stat highlight">
+      <span class="stat-label">Your share of the campus total</span>
+      <span class="stat-value" id="outShare">–</span>
+      <span class="stat-footnote" id="outShareNote">of the ~3.4 lakh pieces IIMBG hostels generate in one academic year (our survey, ~600 residential students)</span>
+    </div>
+  </section>
+
+  <p class="section-title">Try some alternatives</p>
+  <section class="alt-card">
+
+    <div class="toggle-row">
+      <div class="toggle-text">
+        <span class="t-title">Combine orders with wingmates</span>
+        <span class="t-sub" id="groupSubtext">Pool orders so 1 delivery serves several people</span>
+      </div>
+      <select id="groupSize">
+        <option value="1">Just me</option>
+        <option value="2">2 people</option>
+        <option value="3" selected>3 people</option>
+        <option value="4">4 people</option>
+      </select>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-text">
+        <span class="t-title">Refuse extra bags &amp; cutlery</span>
+        <span class="t-sub">Decline add-ons you don't need at checkout</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="refuseExtras">
+        <span class="slider-pill"></span>
+      </label>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-text">
+        <span class="t-title">Choose lower-packaging products</span>
+        <span class="t-sub">Pick the pouch/refill over the boxed option when it exists</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="lowerPackaging">
+        <span class="slider-pill"></span>
+      </label>
+    </div>
+
+    <details class="assumptions">
+      <summary>Savings assumptions — edit for your platform</summary>
+      <div class="assump-grid">
+        <label>Delivery/handling fee saved per avoided order (₹)
+          <input type="number" id="feePerOrder" value="25" step="1" min="0" max="200">
+        </label>
+        <label>Extras reduction (%)
+          <input type="number" id="extrasPct" value="15" step="1" min="0" max="100">
+        </label>
+        <label>Lower-packaging reduction (%)
+          <input type="number" id="packPct" value="20" step="1" min="0" max="100">
+        </label>
+        <label>CO₂e per kg of plastic packaging (kg)
+          <input type="number" id="co2Factor" value="2.5" step="0.1" min="0" max="10">
+        </label>
+      </div>
+      <p class="assump-note">₹25/order is an illustrative average delivery-and-handling fee — not from our survey — so swap in your platform's actual fee if you know it. 2.5 kgCO₂e/kg of plastic is a commonly cited midpoint for packaging production; both are estimates, not measurements.</p>
+    </details>
+
+    <div class="savings-grid">
+      <div class="savings-box">
+        <div class="s-label">Pieces avoided / year</div>
+        <div class="s-value" id="savePieces">–</div>
+      </div>
+      <div class="savings-box">
+        <div class="s-label">Weight avoided / year</div>
+        <div class="s-value" id="saveWeight">–</div>
+      </div>
+      <div class="savings-box">
+        <div class="s-label">Money saved / year</div>
+        <div class="s-value" id="saveMoney">–</div>
+      </div>
+      <div class="savings-box">
+        <div class="s-label">CO₂e avoided / year</div>
+        <div class="s-value" id="saveCO2">–</div>
+      </div>
+    </div>
+  </section>
+
+  <p class="section-title">Ways to cut it down</p>
+  <section class="tips-card">
+    <ul class="tips-list">
+      <li><span class="mark">✓</span>Combine orders within your wing or floor instead of ordering solo.</li>
+      <li><span class="mark">✓</span>Choose products with less packaging whenever a comparable option exists.</li>
+      <li><span class="mark">✓</span>Refuse extra plastic bags, cutlery and other disposables at checkout.</li>
+      <li><span class="mark">✓</span>Separate clean, recyclable plastic from food waste at the point of disposal.</li>
+      <li><span class="mark">✓</span>Use the designated plastic-waste bin instead of the common mixed bin.</li>
+    </ul>
+    <p class="tips-source">Student-led actions from our own Solution slide — the intervention point closest to us, and the cheapest to start.</p>
+  </section>
+
+  <footer>
+    Based on the group's own campus survey — Sustainable Development, Section B, Batch 2026–28, IIM Bodh Gaya. Delivery-fee and CO₂ figures are general estimates, not survey data — adjust them as noted above.
+  </footer>
+
+</div>
+
+<script>
+  const ordersRange = document.getElementById('ordersRange');
+  const ordersNumber = document.getElementById('ordersNumber');
+  const ordersDisplay = document.getElementById('ordersDisplay');
+  const piecesInput = document.getElementById('pieces');
+  const gramsInput = document.getElementById('grams');
+
+  const groupSize = document.getElementById('groupSize');
+  const refuseExtras = document.getElementById('refuseExtras');
+  const lowerPackaging = document.getElementById('lowerPackaging');
+  const feePerOrderInput = document.getElementById('feePerOrder');
+  const extrasPctInput = document.getElementById('extrasPct');
+  const packPctInput = document.getElementById('packPct');
+  const co2FactorInput = document.getElementById('co2Factor');
+
+  const outPieces = document.getElementById('outPieces');
+  const outWeight = document.getElementById('outWeight');
+  const outShare = document.getElementById('outShare');
+  const outShareNote = document.getElementById('outShareNote');
+
+  const savePieces = document.getElementById('savePieces');
+  const saveWeight = document.getElementById('saveWeight');
+  const saveMoney = document.getElementById('saveMoney');
+  const saveCO2 = document.getElementById('saveCO2');
+  const groupSubtext = document.getElementById('groupSubtext');
+
+  const CAMPUS_ANNUAL_PIECES = 340000; // ~3.4 lakh, from the group's own scaled-up estimate
+  const ACADEMIC_WEEKS = 40.5;         // implied by the deck's 8,400/week -> ~3.4 lakh/academic year figure
+  const CALENDAR_WEEKS = 52;
+  const AVG_STUDENT_SHARE_PCT = 100 / 600; // ~600 residential students, equal-share baseline
+
+  function formatIndian(num) {
+    num = Math.max(0, Math.round(num));
+    const str = String(num);
+    if (str.length <= 3) return str;
+    const last3 = str.slice(-3);
+    const rest = str.slice(0, -3);
+    const grouped = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+    return grouped + ',' + last3;
+  }
+
+  function calculate() {
+    const orders = parseFloat(ordersNumber.value) || 0;
+    const pieces = parseFloat(piecesInput.value) || 0;
+    const grams = parseFloat(gramsInput.value) || 0;
+
+    // --- current habits ---
+    const weeklyPieces = orders * pieces;
+    const annualPieces = weeklyPieces * CALENDAR_WEEKS;
+    const annualKg = (annualPieces * grams) / 1000;
+
+    const academicPieces = weeklyPieces * ACADEMIC_WEEKS;
+    const sharePct = CAMPUS_ANNUAL_PIECES > 0 ? (academicPieces / CAMPUS_ANNUAL_PIECES) * 100 : 0;
+    const multiple = AVG_STUDENT_SHARE_PCT > 0 ? sharePct / AVG_STUDENT_SHARE_PCT : 0;
+
+    outPieces.textContent = formatIndian(annualPieces) + ' pieces';
+    outWeight.textContent = annualKg.toFixed(1) + ' kg';
+    outShare.textContent = sharePct.toFixed(3) + '%';
+    outShareNote.textContent = 'of the ~3.4 lakh pieces IIMBG hostels generate in one academic year (our survey, ~600 residential students) — about ' + multiple.toFixed(1) + '× an average resident\'s share';
+
+    // --- with alternatives ---
+    const gSize = parseFloat(groupSize.value) || 1;
+    groupSubtext.textContent = gSize === 1
+      ? 'Pool orders so 1 delivery serves several people'
+      : 'Roughly ' + gSize + '× fewer separate deliveries for the group';
+
+    const extrasPct = refuseExtras.checked ? (parseFloat(extrasPctInput.value) || 0) : 0;
+    const packPct = lowerPackaging.checked ? (parseFloat(packPctInput.value) || 0) : 0;
+
+    const effectiveOrders = orders / gSize;
+    const effectivePieces = pieces * (1 - extrasPct / 100);
+    const effectiveGrams = grams * (1 - packPct / 100);
+
+    const weeklyPiecesAlt = effectiveOrders * effectivePieces;
+    const annualPiecesAlt = weeklyPiecesAlt * CALENDAR_WEEKS;
+    const annualKgAlt = (annualPiecesAlt * effectiveGrams) / 1000;
+
+    const ordersAvoidedPerYear = (orders - effectiveOrders) * CALENDAR_WEEKS;
+    const feePerOrder = parseFloat(feePerOrderInput.value) || 0;
+    const moneySavedPerYear = ordersAvoidedPerYear * feePerOrder;
+
+    const piecesAvoided = Math.max(0, annualPieces - annualPiecesAlt);
+    const kgAvoided = Math.max(0, annualKg - annualKgAlt);
+    const co2Factor = parseFloat(co2FactorInput.value) || 0;
+    const co2Avoided = kgAvoided * co2Factor;
+
+    savePieces.textContent = formatIndian(piecesAvoided);
+    saveWeight.textContent = kgAvoided.toFixed(1) + ' kg';
+    saveMoney.textContent = '₹' + formatIndian(moneySavedPerYear);
+    saveCO2.textContent = co2Avoided.toFixed(1) + ' kg';
+  }
+
+  ordersRange.addEventListener('input', () => {
+    ordersNumber.value = ordersRange.value;
+    ordersDisplay.textContent = ordersRange.value;
+    calculate();
+  });
+  ordersNumber.addEventListener('input', () => {
+    let v = Math.max(0, Math.min(30, parseFloat(ordersNumber.value) || 0));
+    ordersRange.value = Math.min(15, v);
+    ordersDisplay.textContent = v;
+    calculate();
+  });
+  [piecesInput, gramsInput, groupSize, refuseExtras, lowerPackaging,
+   feePerOrderInput, extrasPctInput, packPctInput, co2FactorInput]
+    .forEach(el => el.addEventListener('input', calculate));
+
+  calculate();
+</script>
+
+</body>
+</html>
